@@ -1,9 +1,9 @@
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.7;
 
 //SPDX-License-Identifier: MIT
 
 interface IFlash {
-    function lend(uint256 _amount) external;
+    function lend(address token, uint256 _amount) external;
 
-    function borrow(uint256 _amount) external;
+    function borrow(address token, uint256 _amount) external;
 }
