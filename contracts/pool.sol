@@ -1,12 +1,17 @@
 pragma solidity ^0.8.7;
 // SPDX-License-Identifier: MIT
-import "./IPool.sol";
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/IERC20.sol";
-import "./pool_provider_tokens.sol";
+import "./interfaces/IPool.sol";
+
+import "./pool_provider_token.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract Pool is IPool {
     mapping(address => bool) provider;
     PoolProviderTokens private _providerTokens;
+
+    constructor() {
+        _providerTokens = new PoolProviderTokens("Pool Provider Tokens", "PPT");
+    }
 
     bool locked;
     modifier guard() {
@@ -42,7 +47,6 @@ contract Pool is IPool {
             "invalid transfer"
         );
         provider[msg.sender] = true;
-        _providerTokens = new PoolProviderTokens("Pool Provider Tokens", "PPT");
         // will calculate the amount of PPT to send to caller
         // just using all _amount for now
         _providerTokens.mintProviderTokens(msg.sender, _amount);
@@ -52,7 +56,20 @@ contract Pool is IPool {
         external
         override
         guard
-    {}
+    {
+        require(msg.sender != address(0), "invalid address");
+        require(_amount <= 0, "invalid amount");
+
+        uint256 _initialPoolBalance = IERC20(_token).balanceOf(
+            address(_providerTokens)
+        );
+        IERC20(_token).transfer(msg.sender, _amount);
+        require(
+            _initialPoolBalance >
+                IERC20(_token).balanceOf(address(_providerTokens)),
+            "invalid transfer"
+        );
+    }
 
     function _calculatePPT(address token, uint256 _amount) private {}
 }
