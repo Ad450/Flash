@@ -24,7 +24,7 @@ contract Pool is IPool, Modifiers {
     }
 
     // depositing tokens into pool or staking tokens
-    function lend(address _token, uint256 _amount)
+    function deposit(address _token, uint256 _amount)
         external
         override
         validator(_token, _amount)
@@ -51,25 +51,13 @@ contract Pool is IPool, Modifiers {
         _lenderToken.mintProviderTokens(msg.sender, _amount);
     }
 
-    function withdrawTokens(address _token, uint256 _amount)
+    function withdraw(address _token, uint256 _amount)
         external
+        payable
         override
         validator(_token, _amount)
         guard
     {
-        uint256 _initialPoolBalance = IERC20(_token).balanceOf(address(this));
-        IERC20(_token).transfer(msg.sender, _amount);
-        require(
-            IERC20(_token).balanceOf(address(this)) > _initialPoolBalance,
-            "invalid transfer"
-        );
-    }
-
-    function _calculatePPT(address token, uint256 _amount) private {}
-
-    // normal human banking logic
-    function getLoan(uint256 _amount) public payable guard {
-        // validate sender amount and value
         require(msg.sender != address(0), "invalid address");
         require(msg.value >= 0, "insufficient amount");
         uint256 actualCollateral = msg.value;
@@ -79,7 +67,10 @@ contract Pool is IPool, Modifiers {
             actualCollateral >= requiredCollateral,
             "insufficent collateral"
         );
+        IERC20(_token).transferFrom(address(this), msg.sender, _amount);
     }
+
+    function _calculateProviderTokens(address token, uint256 _amount) private {}
 
     function _collateral(uint256 _amount)
         private
@@ -92,5 +83,9 @@ contract Pool is IPool, Modifiers {
         requiredETH = tradeTokens.mul(castedDAIPrice);
 
         return requiredETH;
+    }
+
+    receive() external payable {
+        require(msg.sender != address(0), "invalid address");
     }
 }
