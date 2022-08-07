@@ -11,14 +11,10 @@ contract Flash is IFlash {
     }
 
     function lend(address token, uint256 _amount) external override {
-        _pool.addTokens(token, _amount);
+        _pool.deposit(token, _amount);
     }
 
-    function borrow(
-        address token,
-        uint256 _amount,
-        address collateral
-    ) external override {
-        // collateral must be ERC20
+    function borrow(address token, uint256 _amount) external override {
+        _pool.withdraw(token, _amount);
     }
 }
