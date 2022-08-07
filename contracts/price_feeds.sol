@@ -6,7 +6,7 @@ import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 contract PriceFeeds {
     AggregatorV3Interface private priceFeed;
     // Aggregator is DAI/ETH
-    address private immutable rinkebyTestnet =
+    address private constant rinkebyTestnet =
         0x74825DbC8BF76CC4e9494d0ecB210f676Efa001D;
 
     constructor() {

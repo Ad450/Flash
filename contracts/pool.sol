@@ -70,7 +70,7 @@ contract Pool is IPool, Modifiers {
         IERC20(_token).transferFrom(address(this), msg.sender, _amount);
     }
 
-    function _calculateProviderTokens(address token, uint256 _amount) private {}
+    function _calculateLenderTokens(address token, uint256 _amount) private {}
 
     function _collateral(uint256 _amount)
         private
