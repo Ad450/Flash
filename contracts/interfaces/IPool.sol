@@ -4,7 +4,7 @@ pragma solidity ^0.8.7;
 
 interface IPool {
     // depositing tokens into pool
-    function lend(address _token, uint256 _amount) external;
+    function deposit(address _token, uint256 _amount) external;
 
-    function withdrawTokens(address _token, uint256 _amount) external;
+    function withdraw(address _token, uint256 _amount) external payable;
 }
