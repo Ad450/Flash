@@ -14,7 +14,7 @@ contract Flash is IFlash {
         _pool.deposit(token, _amount);
     }
 
-    function borrow(address token, uint256 _amount) external override {
+    function borrow(address token, uint256 _amount) external payable override {
         _pool.withdraw(token, _amount);
     }
 }
