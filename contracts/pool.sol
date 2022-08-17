@@ -67,6 +67,9 @@ contract Pool is IPool, Modifiers {
             actualCollateral >= requiredCollateral,
             "insufficent collateral"
         );
+
+        uint256 poolBalance = _getPoolBalance(_token);
+        require(poolBalance >= _amount, "no tokens in pool");
         IERC20(_token).transferFrom(address(this), msg.sender, _amount);
     }
 
@@ -83,6 +86,15 @@ contract Pool is IPool, Modifiers {
         requiredETH = tradeTokens.mul(castedDAIPrice);
 
         return requiredETH;
+    }
+
+    function _getPoolBalance(address token)
+        private
+        view
+        returns (uint256 balance)
+    {
+        balance = IERC20(token).balanceOf(address(this));
+        return balance;
     }
 
     receive() external payable {
